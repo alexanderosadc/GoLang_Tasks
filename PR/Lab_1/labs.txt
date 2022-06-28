@@ -1,0 +1,24 @@
+2 Projects
+
+Must use Threads, Locks, Sockets
+Elixir/Erlang, Haskell, JS, Go, anything with something more highlevel than Locks, Threads and Sockets are prohibited
+
+- Conccurency
+Work with Threads, Locks, and Sockets
+
+Fetch data from some web server, fast, with potential dependencies
+Serialize it into some structures
+Build a concurrent web server
+
+10 primary sources fetch with at min 2 and max 4 threads (need task queue)
+       |
+process (deserialize, load into memory) with 2-4 processes (reader/writer)
+       |
+web server to handle at least 10 connections on 2 threads (async on thread)
+
+- Protocols
+Work with Sockets, build a Protocol over UDP
+Inspire from QUIC, SPDY, HTTP/2, HTTP/3
+Model the protocol as state machine
+Add (1) encryption, (2) error checking, (3) order id, (4) retry, (5) keep alive
+Implement it in a client and server

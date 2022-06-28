@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	resp, err := http.Get("http://localhost:5000/register")
+	resp, err := http.Get("http://192.168.99.100:5000")
 
 	if err != nil {
 		log.Fatal(err)
