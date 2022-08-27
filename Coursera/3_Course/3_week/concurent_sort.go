@@ -15,7 +15,6 @@ func main() {
 	var sortingWaitGroup sync.WaitGroup
 	numberOfSlices := 4
 	arr := *UserInput()
-	//arr := []int{11, 22, 33, 44}
 	resultArr, err := SeparateArray(arr, numberOfSlices)
 	if err != nil {
 		fmt.Println("ERROR:" + err.Error())
@@ -29,15 +28,75 @@ func main() {
 	}
 
 	sortingWaitGroup.Wait()
-
-	mergeSortedArrays(resultArr)
+	bubblesortSliceOfSlices(*resultArr)
+	fmt.Println(*mergeArrays(*resultArr))
 }
 
-func mergeSortedArrays(arr [][]int) {
-	finalArr := []int{}
-	maximalArr := 0
+// Iterates over slice of slices and applies function for merging all slice.
+// Returns one slice with all elements from array sorted
+func mergeArrays(arr [][]int) *[]int {
+	finalSlice := []int{}
+
+	finalSlice = append(finalSlice, arr[0]...)
+
+	for index := 1; index < len(arr); index++ {
+		finalSlice = *merge2Arrays(finalSlice, arr[index])
+	}
+
+	return &finalSlice
 }
 
+// Alghorithm for merging 2 slices in the ascending order of elements.
+// arr1 and arr2 should be sorted arrays
+func merge2Arrays(arr1 []int, arr2 []int) *[]int {
+	arr3 := []int{}
+	i := 0
+	j := 0
+	n1 := len(arr1)
+	n2 := len(arr2)
+
+	for i < n1 && j < n2 {
+		if arr1[i] < arr2[j] {
+			arr3 = append(arr3, arr1[i])
+			i++
+		} else {
+			arr3 = append(arr3, arr2[j])
+			j++
+		}
+	}
+
+	for i < n1 {
+		arr3 = append(arr3, arr1[i])
+		i++
+	}
+
+	for j < n2 {
+		arr3 = append(arr3, arr2[j])
+		j++
+	}
+
+	return &arr3
+}
+
+// Sortes slice of slices based on the first element of each slice
+func bubblesortSliceOfSlices(arr [][]int) {
+	lengthOfSlice := len(arr)
+
+	for i := 0; i < lengthOfSlice-1; i++ {
+		for j := 0; j < lengthOfSlice-i-1; j++ {
+
+			if arr[j][0] > arr[j+1][0] {
+
+				arrBuffer := arr[j]
+				arr[j] = arr[j+1]
+				arr[j+1] = arrBuffer
+			}
+		}
+	}
+}
+
+// Separates slice in number of slices.
+// Returns slice of slices
 func SeparateArray(arr []int, numberOfSlices int) (*[][]int, error) {
 	if len(arr) < numberOfSlices {
 		return nil, errors.New("Number of slices is higher than array length")
@@ -55,6 +114,8 @@ func SeparateArray(arr []int, numberOfSlices int) (*[][]int, error) {
 	return &arrOfElements, nil
 }
 
+// Reads numbers from the console, parses them into int and returns array.
+// When user wants to stop introducing numbers he introduces end word to the console.
 func UserInput() *[]int {
 	arr := []int{}
 	reader := bufio.NewReader(os.Stdin)
@@ -62,7 +123,7 @@ func UserInput() *[]int {
 	var err error
 
 	for {
-		fmt.Println("Introduce integer number")
+		fmt.Println("Introduce integer number or \"end\" command to stop introducing numbers")
 		fmt.Print(">")
 
 		command, err = reader.ReadString('\n')
@@ -86,6 +147,8 @@ func UserInput() *[]int {
 	return &arr
 }
 
+// Extracts start and end index for separating one slice into many.
+// returns slice of slices. In them there are pair of start and end index.
 func getStartEndIndexesFromArray(arrayLength int, numberOfSlices int) *[][]int {
 	floatArrLength := float64(arrayLength)
 	floatNumberOfSlices := float64(numberOfSlices)
